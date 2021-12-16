@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:jsp="http://xmlns.jcp.org/jsf/html">
+    <ui:composition template="template/temp.xhtml">
+        <ui:define name="head">
+            <title>web1 - main</title>
+            <h:outputScript library="js" name="script.js"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <tr class="vertical-elements" id="middle-headers">
+                <td>
+                    График
+                </td>
+                <td>
+                    Данные
+                </td>
+            </tr>
+            <tr class="vertical-elements" id="middle-content">
+                <td id="graph_td">
+                    <object class="result-graph" type="image/svg+xml" data="resources/img/graph.svg">
+                        <img src="resources/img/grafic.png" alt="График не найден" width="220" height="220"/>
+                    </object>
+                    <canvas class="graph_canvas" width="220" height="220">Интерктивная область графика </canvas>
+                </td>
+                <td>
+                    <h:form id="input-form" action="" method="GET">
+                        <table id="input-grid">
+                            <!-- X Value -->
+                            <tr>
+                                <td class="input-grid-label">
+                                    <label>X:</label>
+                                </td>
+
+                                <td class="input-grid-value">
+                                    <h:selectOneRadio value = "#{bean.point.x_val}">
+                                        <f:selectItem itemValue = "-5" itemLabel = "-5" />
+                                        <f:selectItem itemValue = "-4" itemLabel = "-4" />
+                                        <f:selectItem itemValue = "-3" itemLabel = "-3" />
+                                        <f:selectItem itemValue = "-2" itemLabel = "-2" />
+                                        <f:selectItem itemValue = "-1" itemLabel = "-1" />
+                                        <f:selectItem itemValue = "0" itemLabel = "0" />
+                                        <f:selectItem itemValue = "1" itemLabel = "1" />
+                                        <f:selectItem itemValue = "2" itemLabel = "2" />
+                                        <f:selectItem itemValue = "3" itemLabel = "3" />
+                                    </h:selectOneRadio>
+                                </td>
+                            </tr>
+
+                            <!-- Y Value -->
+                            <tr>
+                                <td class="input-grid-label">
+                                    <label>Y:</label>
+                                </td>
+
+                                <td class="input-grid-value">
+                                    <p:inputNumber id="y-text" maxlength="5"
+                                                   value="#{bean.point.y_val}"
+                                                   decimalSeparator="."
+                                                   minValue="-3" maxValue="5"
+                                                   decimalPlaces="2"
+                                                   autocomplete="off"
+                                                   thousandSeparator="false"
+                                                   required="true"/>
+                                </td>
+                            </tr>
+
+                            <!-- R Value -->
+                            <tr>
+                                <td class="input-grid-label">
+                                    <label>R:</label>
+                                </td>
+
+                                <td class="input-grid-value">
+                                    <p:spinner id="basic" value="#{bean.point.r_val}" max="3" min="1" stepFactor="0.5">
+                                        <p:ajax oncomplete="setR();drawPointsFromTable();"/>
+                                    </p:spinner>
+                                </td>
+                            </tr>
+                            <!-- Time Value -->
+                            <tr>
+                                <td class="input-grid-label">
+                                    <label>Time:</label>
+                                </td>
+
+                                <td class="input-grid-value">
+                                    <p:inputText id="time_input" value="#{bean.point.time}">
+                                        <f:converter converterId="beans.TimeConverter"/>
+                                    </p:inputText>
+                                    <h:message for="time_input"/>
+                                </td>
+                            </tr>
+                            <!-- Buttons -->
+                            <tr>
+                                <td colspan="2">
+                                    <div class="buttons">
+                                        <p:commandButton id="submit_button" class="button" value="Отправить"
+                                                         action="#{bean.addRow}" update="@all">
+                                        </p:commandButton>
+                                        <p:commandButton id="clear_button" class="button" value="Стереть"
+                                                         action="#{bean.clear}" update="@all">
+                                        </p:commandButton>
+                                        <p:button id="return_button" styleClass="button" outcome="goToIndex" value="Вернуться"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </h:form>
+                </td>
+            </tr>
+            <tr class="vertical-elements">
+                <td colspan="2">
+                    <h:dataTable value="#{bean.points}" var="raw" id="result-table">
+                        <h:column>
+                            <f:facet class="table_header" name="header">X</f:facet>
+                            #{raw.x_val}
+                        </h:column>
+                        <h:column>
+                            <f:facet class="table_header" name="header">Y</f:facet>
+                            #{raw.y_val}
+                        </h:column>
+                        <h:column>
+                            <f:facet class="table_header" name="header">R</f:facet>
+                            #{raw.r_val}
+                        </h:column>
+                        <h:column>
+                            <f:facet class="table_header" name="header">Текущее время</f:facet>
+                            #{raw.current_time}
+                        </h:column>
+                        <h:column>
+                            <f:facet class="table_header" name="header">Результат</f:facet>
+                            #{raw.result ? "Попал": "Не попал"}
+                        </h:column>
+                        <h:column>
+                            <f:facet class="table_header" name="header">Введенное времечко</f:facet>
+                            #{raw.time}
+                        </h:column>
+                    </h:dataTable>
+                </td>
+            </tr>
+        </ui:define>
+    </ui:composition>
+</html>
